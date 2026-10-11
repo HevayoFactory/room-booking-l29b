@@ -58,10 +58,13 @@
           },
           "text": "Big rooms might need approval from facilities before a booking holds.",
           "createdAt": "2026-10-11T18:57:03.799Z",
-          "status": "sent",
+          "status": "addressed",
           "sentAt": "2026-10-11T18:59:44.627Z",
           "question": "What capacity counts as a big room, and should the slot stay held as pending until facilities approves, or stay free until then?",
-          "answer": "No approval. Any room books straight away; drop this."
+          "answer": "No approval. Any room books straight away; drop this.",
+          "addressedAt": "2026-10-11T18:59:49.034Z",
+          "revision": 3,
+          "reply": "Dropped the approval idea: no design change, and the rule that any room books straight away is now written into Book a room."
         }
       ]
     }

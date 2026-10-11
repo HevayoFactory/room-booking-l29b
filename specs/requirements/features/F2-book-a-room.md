@@ -20,6 +20,7 @@ Needs: F1.
 
 - A staff member can hold any number of bookings.
 - A booking is for one room on one day and covers consecutive one-hour slots.
+- Any room books straight away; no room needs facilities approval before a booking holds.
 - Staff can cancel only their own upcoming bookings; past bookings cannot be cancelled.
 
 ## Out of Scope
