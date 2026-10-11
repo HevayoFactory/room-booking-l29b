@@ -1,0 +1,4 @@
+apiVersion = "agentic-engineer/v1"
+name = "room-booking-l29b"
+createdAt = "2026-10-11T18:46:34Z"
+idea = "A meeting-room booking app: staff sign in and book a room for a time slot today or later; a facilities admin adds rooms and can cancel any booking. One web app and one API, sign-in with two roles (staff, facilities admin)."
