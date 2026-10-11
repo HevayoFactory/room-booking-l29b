@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "artifacts": [
+    {
+      "path": "specs/design/components/room-booking-webapp/prototype.json",
+      "comments": [
+        {
+          "id": "ba329e0e-bb8c-4908-a140-c1dfbc6f4c99",
+          "author": {
+            "id": "01900000-0000-7000-8000-000000000030",
+            "name": "Administrator"
+          },
+          "text": "Label wording: call this nav item Find a room instead of Availability.",
+          "createdAt": "2026-10-11T18:56:31.792Z",
+          "status": "sent",
+          "anchor": {
+            "screenId": "screen.availability",
+            "roleId": "Staff",
+            "stateId": "state.default",
+            "elementIds": [
+              "nav.availability"
+            ]
+          },
+          "sentAt": "2026-10-11T18:57:16.310Z"
+        }
+      ]
+    },
+    {
+      "path": "specs/design/domain-model.md",
+      "comments": [
+        {
+          "id": "0086871f-35c8-4f6c-86e0-625930d3a07a",
+          "author": {
+            "id": "01900000-0000-7000-8000-000000000030",
+            "name": "Administrator"
+          },
+          "text": "Rename the Booking field bookerName to bookedByName; it is the person shown as the booker.",
+          "createdAt": "2026-10-11T18:56:53.905Z",
+          "status": "sent",
+          "sentAt": "2026-10-11T18:57:16.310Z"
+        }
+      ]
+    },
+    {
+      "path": "specs/design/security.json",
+      "comments": [
+        {
+          "id": "023be66b-67bd-4b94-ba0c-55e22ba9a1d1",
+          "author": {
+            "id": "01900000-0000-7000-8000-000000000030",
+            "name": "Administrator"
+          },
+          "text": "Big rooms might need approval from facilities before a booking holds.",
+          "createdAt": "2026-10-11T18:57:03.799Z",
+          "status": "sent",
+          "sentAt": "2026-10-11T18:57:16.310Z"
+        }
+      ]
+    }
+  ]
+}
