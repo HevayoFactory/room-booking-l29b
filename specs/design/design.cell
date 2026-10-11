@@ -1,0 +1,15 @@
+title Room Booking
+
+component room-booking-webapp as "Room Booking Web App" web-application
+component room-booking-api as "Room Booking API" service
+component bookings-db as "Bookings Database" database
+
+east user-auth as "Thunder Auth" identity-server
+
+north -> room-booking-webapp
+north -> room-booking-api
+
+room-booking-webapp -> room-booking-api
+room-booking-webapp -> user-auth
+room-booking-api -> user-auth
+room-booking-api -> bookings-db
