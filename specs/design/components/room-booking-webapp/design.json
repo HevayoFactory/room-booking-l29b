@@ -2,11 +2,16 @@
   "name": "room-booking-webapp",
   "type": "web-application",
   "version": "0.1.0",
-  "language": "TBD",
+  "language": "TypeScript",
   "buildpack": "docker",
   "appPath": "room-booking-webapp",
   "entrypoint": "deployment/web-application",
   "exposure": "internet",
-  "dependencies": [],
-  "description": "Scaffolded from design.cell — enrich with this component's responsibility, language (org Tech stack default first), the PRD stories it serves, dependencies, and pinned skills."
+  "dependencies": [
+    { "kind": "component", "name": "room-booking-api", "description": "Loads rooms and availability, creates and cancels bookings, manages rooms." },
+    { "kind": "platform-resource", "name": "user-auth", "resourceType": "thunder-app", "description": "Signs users in through SSO." }
+  ],
+  "description": "The single browser app for both roles: staff browse rooms and a day's availability, book consecutive slots and manage their own bookings; the facilities admin manages rooms and cancels bookings from the day view. It is one bundle because both roles share one lifecycle; it holds no data of its own.",
+  "stories": ["F1.1", "F1.2", "F1.3", "F1.4", "F1.5", "F2.1", "F2.2", "F2.3", "F2.4", "F2.5", "F2.6", "F2.7", "F3.1", "F3.2", "F3.3", "F3.4", "F3.5", "F3.6"],
+  "skillsPinned": ["react-webapp", "oxygen-ui-design-system", "thunder-authentication"]
 }

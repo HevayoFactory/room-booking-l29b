@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 3,
+  "name": "Room Booking",
+  "entryScreen": "screen.availability",
+  "roles": [
+    { "id": "Staff", "name": "Staff" },
+    { "id": "FacilitiesAdmin", "name": "Facilities admin" }
+  ],
+  "states": [
+    { "id": "state.default", "name": "Default" },
+    { "id": "state.empty", "name": "No rooms" },
+    { "id": "state.validation-error", "name": "Validation errors" },
+    { "id": "state.failed", "name": "Service failed" }
+  ],
+  "screens": [
+    { "id": "screen.availability", "name": "Rooms and availability", "roleIds": ["Staff", "FacilitiesAdmin"] },
+    { "id": "screen.book", "name": "Book a room", "roleIds": ["Staff"] },
+    { "id": "screen.my-bookings", "name": "My bookings", "roleIds": ["Staff"] },
+    { "id": "screen.rooms", "name": "Manage rooms", "roleIds": ["FacilitiesAdmin"] },
+    { "id": "screen.account", "name": "Account", "roleIds": ["Staff", "FacilitiesAdmin"] },
+    { "id": "screen.signed-out", "name": "Signed out", "roleIds": ["Staff", "FacilitiesAdmin"] }
+  ],
+  "flows": [
+    { "id": "flow.browse", "name": "Browse rooms and availability", "roleId": "Staff",
+      "screenIds": ["screen.availability"] },
+    { "id": "flow.book", "name": "Book a room", "roleId": "Staff",
+      "screenIds": ["screen.availability", "screen.book", "screen.my-bookings"] },
+    { "id": "flow.cancel-own", "name": "Cancel my booking", "roleId": "Staff",
+      "screenIds": ["screen.my-bookings"] },
+    { "id": "flow.admin-browse", "name": "See who booked each slot", "roleId": "FacilitiesAdmin",
+      "screenIds": ["screen.availability"] },
+    { "id": "flow.admin-cancel", "name": "Cancel any booking", "roleId": "FacilitiesAdmin",
+      "screenIds": ["screen.availability"] },
+    { "id": "flow.manage-rooms", "name": "Manage rooms", "roleId": "FacilitiesAdmin",
+      "screenIds": ["screen.rooms", "screen.availability"] }
+  ]
+}

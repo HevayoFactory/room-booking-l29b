@@ -1,0 +1,315 @@
+openapi: 3.0.3
+info:
+  title: Room Booking API
+  version: 0.1.0
+  description: Meeting rooms, their one-hour slot availability and bookings.
+servers:
+  - url: /
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: /oauth2/authorize
+          tokenUrl: /oauth2/token
+          scopes:
+            rooms:read: List the active rooms
+            rooms:manage: Add, edit, deactivate and reactivate rooms
+            bookings:read-all: Every booking on a day, with who booked it
+            bookings:read: The caller's own bookings
+            bookings:create: Book a room for the caller
+            bookings:cancel: Cancel one of the caller's own bookings
+            bookings:cancel-any: Cancel any booking
+  parameters:
+    Limit:
+      name: limit
+      in: query
+      schema: { type: integer, default: 20, minimum: 1, maximum: 100 }
+    Offset:
+      name: offset
+      in: query
+      schema: { type: integer, default: 0, minimum: 0 }
+    RoomId:
+      name: roomId
+      in: path
+      required: true
+      schema: { type: string }
+    BookingId:
+      name: bookingId
+      in: path
+      required: true
+      schema: { type: string }
+  schemas:
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code: { type: integer, description: HTTP or application error code }
+        message: { type: string, description: short human-readable label }
+        description: { type: string, description: detailed explanation }
+        moreInfo: { type: string, description: URI to documentation }
+    Room:
+      type: object
+      required: [id, name, capacity, location, active]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        capacity: { type: integer, minimum: 1 }
+        location: { type: string, description: floor and building }
+        active: { type: boolean, description: false when hidden from booking }
+    RoomInput:
+      type: object
+      required: [name, capacity, location]
+      properties:
+        name: { type: string, description: unique among rooms }
+        capacity: { type: integer, minimum: 1 }
+        location: { type: string }
+    RoomPatch:
+      type: object
+      properties:
+        name: { type: string }
+        capacity: { type: integer, minimum: 1 }
+        location: { type: string }
+        active: { type: boolean, description: false deactivates the room and cancels its future bookings }
+    RoomList:
+      type: object
+      required: [count, data]
+      properties:
+        count: { type: integer }
+        next: { type: string, nullable: true }
+        previous: { type: string, nullable: true }
+        data: { type: array, items: { $ref: '#/components/schemas/Room' } }
+    Booking:
+      type: object
+      required: [id, roomId, roomName, date, startHour, endHour, bookerName, status]
+      properties:
+        id: { type: string }
+        roomId: { type: string }
+        roomName: { type: string }
+        date: { type: string, format: date }
+        startHour: { type: integer, minimum: 8, maximum: 17, description: first booked hour, 24-hour clock }
+        endHour: { type: integer, minimum: 9, maximum: 18, description: end of the last booked hour, exclusive }
+        title: { type: string, nullable: true }
+        bookerName: { type: string }
+        status: { type: string, enum: [active, cancelled] }
+        cancelledBy: { type: string, enum: [booker, facilities], nullable: true }
+        cancelReason: { type: string, nullable: true }
+    BookingInput:
+      type: object
+      required: [roomId, date, startHour, endHour]
+      properties:
+        roomId: { type: string }
+        date: { type: string, format: date, description: today up to 30 days ahead }
+        startHour: { type: integer, minimum: 8, maximum: 17 }
+        endHour: { type: integer, minimum: 9, maximum: 18, description: exclusive; later than startHour }
+        title: { type: string, nullable: true }
+    CancelInput:
+      type: object
+      properties:
+        reason: { type: string, nullable: true, description: shown to the booker }
+    BookingList:
+      type: object
+      required: [count, data]
+      properties:
+        count: { type: integer }
+        next: { type: string, nullable: true }
+        previous: { type: string, nullable: true }
+        data: { type: array, items: { $ref: '#/components/schemas/Booking' } }
+  responses:
+    BadRequest:
+      description: The request is invalid
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Unauthorized:
+      description: Not signed in or not permitted
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    NotFound:
+      description: No such record for this caller
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Conflict:
+      description: The slot or name is already taken
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+security:
+  - oauth2: []
+paths:
+  /rooms:
+    get:
+      operationId: listRooms
+      summary: Active rooms
+      security:
+        - oauth2: [rooms:read]
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Offset'
+      responses:
+        '200':
+          description: Active rooms
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RoomList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /admin/rooms:
+    get:
+      operationId: listAllRooms
+      summary: Every room, inactive ones included
+      security:
+        - oauth2: [rooms:manage]
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Offset'
+      responses:
+        '200':
+          description: Every room
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RoomList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createRoom
+      summary: Add a room
+      security:
+        - oauth2: [rooms:manage]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RoomInput' }
+      responses:
+        '201':
+          description: Room created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Room' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /admin/rooms/{roomId}:
+    patch:
+      operationId: updateRoom
+      summary: Edit, deactivate or reactivate a room
+      security:
+        - oauth2: [rooms:manage]
+      parameters:
+        - $ref: '#/components/parameters/RoomId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RoomPatch' }
+      responses:
+        '200':
+          description: Room updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Room' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /bookings:
+    get:
+      operationId: listDayBookings
+      summary: Every active booking of a room on a day, with who booked it
+      security:
+        - oauth2: [bookings:read-all]
+      parameters:
+        - name: roomId
+          in: query
+          required: true
+          schema: { type: string }
+        - name: date
+          in: query
+          required: true
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Offset'
+      responses:
+        '200':
+          description: Active bookings of the room on the day
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BookingList' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /bookings/{bookingId}/cancel:
+    post:
+      operationId: cancelBooking
+      summary: Cancel any upcoming booking
+      security:
+        - oauth2: [bookings:cancel-any]
+      parameters:
+        - $ref: '#/components/parameters/BookingId'
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CancelInput' }
+      responses:
+        '200':
+          description: Booking cancelled by facilities
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Booking' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /me/bookings:
+    get:
+      operationId: listMyBookings
+      summary: The caller's upcoming bookings, and those cancelled by facilities until their day has passed
+      security:
+        - oauth2: [bookings:read]
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Offset'
+      responses:
+        '200':
+          description: The caller's bookings, soonest first
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BookingList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createMyBooking
+      summary: Book consecutive free slots for the caller
+      security:
+        - oauth2: [bookings:create]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BookingInput' }
+      responses:
+        '201':
+          description: Booking created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Booking' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /me/bookings/{bookingId}/cancel:
+    post:
+      operationId: cancelMyBooking
+      summary: Cancel one of the caller's upcoming bookings
+      security:
+        - oauth2: [bookings:cancel]
+      parameters:
+        - $ref: '#/components/parameters/BookingId'
+      responses:
+        '200':
+          description: Booking cancelled
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Booking' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }

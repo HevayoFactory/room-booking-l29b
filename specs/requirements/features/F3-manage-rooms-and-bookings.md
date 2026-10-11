@@ -21,6 +21,9 @@ Needs: F1.
 - Rooms are deactivated, never deleted, so past bookings keep their room.
 - A cancelled slot becomes free for booking again.
 - Room names are unique.
+- Deactivated rooms do not appear for staff; the facilities admin still sees them, marked inactive. *assumed*
+- The facilities admin cancels a booking by opening its taken slot in the day's availability view; only upcoming bookings can be cancelled. *assumed*
+- A staff member's bookings list also shows bookings cancelled by facilities, with the reason, until the booking's day has passed. *assumed*
 
 ## Out of Scope
 
