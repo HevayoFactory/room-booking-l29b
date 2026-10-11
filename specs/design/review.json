@@ -12,7 +12,7 @@
           },
           "text": "Label wording: call this nav item Find a room instead of Availability.",
           "createdAt": "2026-10-11T18:56:31.792Z",
-          "status": "sent",
+          "status": "addressed",
           "anchor": {
             "screenId": "screen.availability",
             "roleId": "Staff",
@@ -21,7 +21,10 @@
               "nav.availability"
             ]
           },
-          "sentAt": "2026-10-11T18:57:16.310Z"
+          "sentAt": "2026-10-11T18:57:16.310Z",
+          "addressedAt": "2026-10-11T18:57:20.938Z",
+          "revision": 2,
+          "reply": "Renamed the staff navigation entry to Find a room; the facilities admin's entry keeps its own label."
         }
       ]
     },
@@ -36,8 +39,11 @@
           },
           "text": "Rename the Booking field bookerName to bookedByName; it is the person shown as the booker.",
           "createdAt": "2026-10-11T18:56:53.905Z",
-          "status": "sent",
-          "sentAt": "2026-10-11T18:57:16.310Z"
+          "status": "addressed",
+          "sentAt": "2026-10-11T18:57:16.310Z",
+          "addressedAt": "2026-10-11T18:57:20.938Z",
+          "revision": 2,
+          "reply": "Renamed bookerName to bookedByName in the data model, the API contract and the prototype."
         }
       ]
     },
@@ -53,7 +59,8 @@
           "text": "Big rooms might need approval from facilities before a booking holds.",
           "createdAt": "2026-10-11T18:57:03.799Z",
           "status": "sent",
-          "sentAt": "2026-10-11T18:57:16.310Z"
+          "sentAt": "2026-10-11T18:57:16.310Z",
+          "question": "What capacity counts as a big room, and should the slot stay held as pending until facilities approves, or stay free until then?"
         }
       ]
     }

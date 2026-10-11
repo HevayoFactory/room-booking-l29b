@@ -20,7 +20,7 @@ erDiagram
         int endHour "09..18, exclusive"
         string title "optional"
         string bookerId "gateway subject"
-        string bookerName
+        string bookedByName "person shown as the booker"
         string status "active|cancelled"
         string cancelledBy "booker|facilities"
         string cancelReason "optional"

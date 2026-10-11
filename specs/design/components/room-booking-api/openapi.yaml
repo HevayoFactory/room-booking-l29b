@@ -82,7 +82,7 @@ components:
         data: { type: array, items: { $ref: '#/components/schemas/Room' } }
     Booking:
       type: object
-      required: [id, roomId, roomName, date, startHour, endHour, bookerName, status]
+      required: [id, roomId, roomName, date, startHour, endHour, bookedByName, status]
       properties:
         id: { type: string }
         roomId: { type: string }
@@ -91,7 +91,7 @@ components:
         startHour: { type: integer, minimum: 8, maximum: 17, description: first booked hour, 24-hour clock }
         endHour: { type: integer, minimum: 9, maximum: 18, description: end of the last booked hour, exclusive }
         title: { type: string, nullable: true }
-        bookerName: { type: string }
+        bookedByName: { type: string, description: person shown as the booker }
         status: { type: string, enum: [active, cancelled] }
         cancelledBy: { type: string, enum: [booker, facilities], nullable: true }
         cancelReason: { type: string, nullable: true }

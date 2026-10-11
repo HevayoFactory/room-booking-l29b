@@ -8,7 +8,7 @@ import {
 interface Room { id: string; name: string; capacity: number; location: string; status: string }
 interface Booking {
   id: string; roomId: string; date: string; startHour: number; endHour: number; title: string;
-  bookerId: string; bookerName: string; status: string; cancelledBy: string; cancelReason: string;
+  bookerId: string; bookedByName: string; status: string; cancelledBy: string; cancelReason: string;
 }
 
 const NOW_HOUR = 11;
@@ -24,11 +24,11 @@ const rooms: Room[] = [
 ];
 
 const bookings: Booking[] = [
-  { id: "b1", roomId: "r1", date: "2026-01-15", startHour: 13, endHour: 15, title: "Sprint planning", bookerId: "asha", bookerName: "Asha Perera", status: "Active", cancelledBy: "", cancelReason: "" },
-  { id: "b2", roomId: "r1", date: "2026-01-15", startHour: 9, endHour: 10, title: "Design sync", bookerId: "ravi", bookerName: "Ravi Silva", status: "Active", cancelledBy: "", cancelReason: "" },
-  { id: "b3", roomId: "r2", date: "2026-01-16", startHour: 10, endHour: 11, title: "Interview", bookerId: "asha", bookerName: "Asha Perera", status: "Active", cancelledBy: "", cancelReason: "" },
-  { id: "b4", roomId: "r3", date: "2026-01-16", startHour: 14, endHour: 16, title: "Town hall prep", bookerId: "asha", bookerName: "Asha Perera", status: "Cancelled", cancelledBy: "facilities", cancelReason: "Projector maintenance" },
-  { id: "b5", roomId: "r3", date: "2026-01-17", startHour: 8, endHour: 9, title: "Vendor call", bookerId: "ravi", bookerName: "Ravi Silva", status: "Active", cancelledBy: "", cancelReason: "" },
+  { id: "b1", roomId: "r1", date: "2026-01-15", startHour: 13, endHour: 15, title: "Sprint planning", bookerId: "asha", bookedByName: "Asha Perera", status: "Active", cancelledBy: "", cancelReason: "" },
+  { id: "b2", roomId: "r1", date: "2026-01-15", startHour: 9, endHour: 10, title: "Design sync", bookerId: "ravi", bookedByName: "Ravi Silva", status: "Active", cancelledBy: "", cancelReason: "" },
+  { id: "b3", roomId: "r2", date: "2026-01-16", startHour: 10, endHour: 11, title: "Interview", bookerId: "asha", bookedByName: "Asha Perera", status: "Active", cancelledBy: "", cancelReason: "" },
+  { id: "b4", roomId: "r3", date: "2026-01-16", startHour: 14, endHour: 16, title: "Town hall prep", bookerId: "asha", bookedByName: "Asha Perera", status: "Cancelled", cancelledBy: "facilities", cancelReason: "Projector maintenance" },
+  { id: "b5", roomId: "r3", date: "2026-01-17", startHour: 8, endHour: 9, title: "Vendor call", bookerId: "ravi", bookedByName: "Ravi Silva", status: "Active", cancelledBy: "", cancelReason: "" },
 ];
 
 const pad = (h: number) => (h < 10 ? `0${h}` : String(h));
@@ -46,7 +46,7 @@ function Shell({ children }: { children: ReactNode }) {
         { id: "nav.rooms", label: "Manage rooms", to: "screen.rooms" },
       ]
     : [
-        { id: "nav.availability", label: "Availability", to: "screen.availability" },
+        { id: "nav.availability", label: "Find a room", to: "screen.availability" },
         { id: "nav.book", label: "Book a room", to: "screen.book" },
         { id: "nav.my-bookings", label: "My bookings", to: "screen.my-bookings" },
       ];
@@ -118,7 +118,7 @@ function Availability() {
             columns={["Slot", { label: "Status", kind: "status" }, "Booked by", "Title"]}
             rows={slots.map(({ h, booking, past }) => ({
               id: `slot.${h}`,
-              cells: [`${hourLabel(h)} to ${hourLabel(h + 1)}`, booking ? booking.bookerName : "", booking ? booking.title : ""],
+              cells: [`${hourLabel(h)} to ${hourLabel(h + 1)}`, booking ? booking.bookedByName : "", booking ? booking.title : ""],
               status: booking
                 ? { text: "Taken", tone: "warning" as const }
                 : past
@@ -145,7 +145,7 @@ function Availability() {
           }}
           actions={<Button id="btn.cancel.confirm" label="Cancel booking" emphasis="danger" submit />}
         >
-          <Text id="text.cancel" text={target ? `${target.title || "Untitled"}, ${target.bookerName}, ${hourLabel(target.startHour)} to ${hourLabel(target.endHour)}. The slots become free.` : ""} />
+          <Text id="text.cancel" text={target ? `${target.title || "Untitled"}, ${target.bookedByName}, ${hourLabel(target.startHour)} to ${hourLabel(target.endHour)}. The slots become free.` : ""} />
           <Field id="field.reason" name="reason" label="Reason (optional, shown to the booker)" type="textarea" />
         </Form>
       </Dialog>
@@ -182,7 +182,7 @@ function BookRoom() {
     if (clash) return setProblem("One of those slots was just taken by someone else. Nothing was booked.");
     bookingsData.create({
       roomId: chosen.id, date, startHour: from, endHour: to, title: v.title ?? "", bookerId: CURRENT_STAFF,
-      bookerName: "Asha Perera", status: "Active", cancelledBy: "", cancelReason: "",
+      bookedByName: "Asha Perera", status: "Active", cancelledBy: "", cancelReason: "",
     });
     setProblem(null);
     navigate.go("screen.my-bookings");
