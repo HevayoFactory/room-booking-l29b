@@ -3,6 +3,7 @@
   "artifacts": [
     {
       "path": "specs/design/components/room-booking-webapp/prototype.json",
+      "checkedHash": "64ad56bc8f73d23f20eb9746b1844aca1b2c2c79bad2386e79d65dbc249ec8cf",
       "comments": [
         {
           "id": "ba329e0e-bb8c-4908-a140-c1dfbc6f4c99",
@@ -30,6 +31,7 @@
     },
     {
       "path": "specs/design/domain-model.md",
+      "checkedHash": "41d16cc99ae1e3fd9ce7c54d773d9cb27d92379957dfc82bacdadc04b9f1cd13",
       "comments": [
         {
           "id": "0086871f-35c8-4f6c-86e0-625930d3a07a",
@@ -49,6 +51,7 @@
     },
     {
       "path": "specs/design/security.json",
+      "checkedHash": "fe4ed38ec72137bebaf4adf080439c1e222b4a0bbd538e35bf199518b8c83b87",
       "comments": [
         {
           "id": "023be66b-67bd-4b94-ba0c-55e22ba9a1d1",
@@ -67,6 +70,18 @@
           "reply": "Dropped the approval idea: no design change, and the rule that any room books straight away is now written into Book a room."
         }
       ]
+    },
+    {
+      "path": "specs/design/design.cell",
+      "checkedHash": "f08a9084f19f9769b7b1db85c09bdceb8900ca04618ffa5577b4468d6b8cb45a"
+    },
+    {
+      "path": "specs/design/components/room-booking-api/openapi.yaml",
+      "checkedHash": "f000db9b762fc3697e2773886e6de5c057d88f9e36ce92f52d15304220a2fec1"
+    },
+    {
+      "path": "specs/design/decisions.md",
+      "checkedHash": "e4255e68ad72cafbda14c18ca5a7841c10a3d55687fd616def6c031f6feacef6"
     }
   ]
 }
