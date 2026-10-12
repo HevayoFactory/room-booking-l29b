@@ -12,6 +12,8 @@ import {
 import { CalendarDays, CalendarPlus, DoorOpen, ListChecks, User } from "@wso2/oxygen-ui-icons-react";
 import { APP_NAME } from "../appName";
 import { Can, useAuthz, useHeldRoles } from "../authz/gates";
+import { canCall } from "../authz/core";
+import { OPERATIONS } from "../authz/operations.gen";
 import { SCREEN_ROUTES } from "../authz/screens";
 import { currentUser, signOut } from "../authz/session";
 
@@ -29,7 +31,7 @@ const NAV = SCREEN_ROUTES.filter((s) => s.key in NAV_ICONS);
 export function AppLayout(): ReactElement {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { username } = useAuthz();
+  const { username, scopes, signedIn } = useAuthz();
   const roles = useHeldRoles();
   const [email, setEmail] = useState("");
   useEffect(() => {
@@ -40,6 +42,14 @@ export function AppLayout(): ReactElement {
   }, []);
 
   const active = NAV.find((s) => pathname.startsWith(s.path))?.key;
+  // Role-aware rail label: facilities (who can call GET /admin/rooms) see
+  // "Availability"; staff see "Find a room". Gating stays on screens.ts.
+  const labelFor = (key: string, label: string): string =>
+    key === "availability" && !canCall(OPERATIONS["GET /admin/rooms"], scopes, signedIn)
+      ? "Find a room"
+      : key === "availability"
+        ? "Availability"
+        : label;
   const name = username || "Signed in";
 
   return (
@@ -73,7 +83,7 @@ export function AppLayout(): ReactElement {
                 <Can key={screen.key} op={screen.loads!}>
                   <Sidebar.Item id={screen.key} link={<Link to={screen.path} />}>
                     <Sidebar.ItemIcon>{NAV_ICONS[screen.key]}</Sidebar.ItemIcon>
-                    <Sidebar.ItemLabel>{screen.label}</Sidebar.ItemLabel>
+                    <Sidebar.ItemLabel>{labelFor(screen.key, screen.label)}</Sidebar.ItemLabel>
                   </Sidebar.Item>
                 </Can>
               ))}

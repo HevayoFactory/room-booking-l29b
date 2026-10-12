@@ -14,8 +14,17 @@ service http:InterceptableService / on ep0 {
     # + return - returns can be any of following types 
     # http:Ok (Every room)
     # http:Unauthorized (Not signed in or not permitted)
-    resource function get admin/rooms(int 'limit = 20, int offset = 0) returns RoomList|ErrorUnauthorized|http:NotImplemented {
-        return http:NOT_IMPLEMENTED;
+    resource function get admin/rooms(http:RequestContext ctx, int 'limit = 20, int offset = 0)
+            returns RoomList|ErrorUnauthorized|http:InternalServerError {
+        if requireGatewayCaller(ctx) is http:Unauthorized {
+            return unauthorized();
+        }
+        [int, int] page = normalizePaging('limit, offset);
+        RoomList|error rooms = loadRooms(true, page[0], page[1]);
+        if rooms is error {
+            return serverError("listAllRooms", rooms);
+        }
+        return rooms;
     }
 
     # Every active booking of a room on a day, with who booked it
@@ -24,8 +33,21 @@ service http:InterceptableService / on ep0 {
     # http:Ok (Active bookings of the room on the day)
     # http:BadRequest (The request is invalid)
     # http:Unauthorized (Not signed in or not permitted)
-    resource function get bookings(string roomId, string date, int 'limit = 20, int offset = 0) returns BookingList|ErrorBadRequest|ErrorUnauthorized|http:NotImplemented {
-        return http:NOT_IMPLEMENTED;
+    resource function get bookings(http:RequestContext ctx, string roomId, string date, int 'limit = 20, int offset = 0)
+            returns BookingList|ErrorBadRequest|ErrorUnauthorized|http:InternalServerError {
+        if requireGatewayCaller(ctx) is http:Unauthorized {
+            return unauthorized();
+        }
+        string? problem = validateDayQuery(roomId, date, officeNow());
+        if problem is string {
+            return badRequest(problem);
+        }
+        [int, int] page = normalizePaging('limit, offset);
+        BookingList|error bookings = loadDayBookings(roomId.trim(), date, page[0], page[1]);
+        if bookings is error {
+            return serverError("listDayBookings", bookings);
+        }
+        return bookings;
     }
 
     # The caller's upcoming bookings, and those cancelled by facilities until their day has passed
@@ -42,8 +64,17 @@ service http:InterceptableService / on ep0 {
     # + return - returns can be any of following types 
     # http:Ok (Active rooms)
     # http:Unauthorized (Not signed in or not permitted)
-    resource function get rooms(int 'limit = 20, int offset = 0) returns RoomList|ErrorUnauthorized|http:NotImplemented {
-        return http:NOT_IMPLEMENTED;
+    resource function get rooms(http:RequestContext ctx, int 'limit = 20, int offset = 0)
+            returns RoomList|ErrorUnauthorized|http:InternalServerError {
+        if requireGatewayCaller(ctx) is http:Unauthorized {
+            return unauthorized();
+        }
+        [int, int] page = normalizePaging('limit, offset);
+        RoomList|error rooms = loadRooms(false, page[0], page[1]);
+        if rooms is error {
+            return serverError("listRooms", rooms);
+        }
+        return rooms;
     }
 
     # Edit, deactivate or reactivate a room
