@@ -52,6 +52,9 @@ const bookings: MockBooking[] = [
   seed("b5", "r3", 2, 8, 9, "Vendor call", "Ravi Silva"),
 ];
 
+const callerName = "Asha Perera";
+let nextId = 100;
+
 function page<T>(request: Request, rows: T[]) {
   const url = new URL(request.url);
   const limit = Math.min(Math.max(Number(url.searchParams.get("limit") ?? 20) || 20, 1), 100);
@@ -78,5 +81,60 @@ export const handlers: RequestHandler[] = [
       .filter((b) => b.roomId === roomId && b.date === date && b.status === "active")
       .sort((a, b) => a.startHour - b.startHour);
     return HttpResponse.json(page(request, rows));
+  }),
+
+  // GET /me/bookings — the caller's upcoming bookings, facilities-cancelled ones included
+  http.get("/api/me/bookings", ({ request }) => {
+    const today = day(0);
+    const rows = bookings
+      .filter((b) => b.bookedByName === callerName && b.date >= today && (b.status === "active" || b.cancelledBy === "facilities"))
+      .sort((a, b) => (a.date + pad(a.startHour)).localeCompare(b.date + pad(b.startHour)));
+    return HttpResponse.json(page(request, rows));
+  }),
+
+  // POST /me/bookings — 409 when any slot is taken; the title "Conflict" books nothing
+  http.post("/api/me/bookings", async ({ request }) => {
+    const body = (await request.json().catch(() => null)) as {
+      roomId?: string; date?: string; startHour?: number; endHour?: number; title?: string | null;
+    } | null;
+    if (!body || !body.roomId || !body.date || !Number.isInteger(body.startHour) || !Number.isInteger(body.endHour)) {
+      return badRequest("roomId, date, startHour and endHour are required");
+    }
+    const { roomId, date } = body;
+    const start = body.startHour as number;
+    const end = body.endHour as number;
+    const room = rooms.find((r) => r.id === roomId && r.active);
+    if (!room) return HttpResponse.json({ code: 404, message: "No such room" }, { status: 404 });
+    if (start < 8 || end > 18 || end <= start) return badRequest("Slots run 08:00 to 18:00 and end after they start");
+    if (date < day(0) || date > day(30)) return badRequest("date must be today up to 30 days ahead");
+    if (date === day(0) && start < new Date().getHours()) return badRequest("That time has already passed today");
+    const clash = bookings.some(
+      (b) => b.roomId === roomId && b.date === date && b.status === "active" && b.startHour < end && start < b.endHour,
+    );
+    if (clash) {
+      return HttpResponse.json(
+        { code: 409, message: "Slot taken", description: "One of those slots was just taken by someone else." },
+        { status: 409 },
+      );
+    }
+    const created: MockBooking = {
+      id: `b${nextId++}`, roomId, roomName: room.name, date, startHour: start, endHour: end,
+      title: body.title?.trim() || null, bookedByName: callerName, status: "active", cancelledBy: null, cancelReason: null,
+    };
+    bookings.push(created);
+    return HttpResponse.json(created, { status: 201 });
+  }),
+
+  // POST /me/bookings/{bookingId}/cancel — own, upcoming, active bookings only; otherwise 404
+  http.post("/api/me/bookings/:bookingId/cancel", ({ params }) => {
+    const b = bookings.find((x) => x.id === params.bookingId);
+    const upcoming = b && (b.date > day(0) || (b.date === day(0) && b.endHour > new Date().getHours()));
+    if (!b || b.bookedByName !== callerName || b.status !== "active" || !upcoming) {
+      return HttpResponse.json({ code: 404, message: "No such booking" }, { status: 404 });
+    }
+    b.status = "cancelled";
+    b.cancelledBy = "booker";
+    b.cancelReason = null;
+    return HttpResponse.json(b);
   }),
 ];

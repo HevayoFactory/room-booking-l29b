@@ -55,8 +55,18 @@ service http:InterceptableService / on ep0 {
     # + return - returns can be any of following types 
     # http:Ok (The caller's bookings, soonest first)
     # http:Unauthorized (Not signed in or not permitted)
-    resource function get me/bookings(int 'limit = 20, int offset = 0) returns BookingList|ErrorUnauthorized|http:NotImplemented {
-        return http:NOT_IMPLEMENTED;
+    resource function get me/bookings(http:RequestContext ctx, int 'limit = 20, int offset = 0)
+            returns BookingList|ErrorUnauthorized|http:InternalServerError {
+        GatewayCaller|http:Unauthorized caller = requireGatewayCaller(ctx);
+        if caller is http:Unauthorized {
+            return unauthorized();
+        }
+        [int, int] page = normalizePaging('limit, offset);
+        BookingList|error bookings = loadMyBookings(caller.userId, dateText(officeNow()), page[0], page[1]);
+        if bookings is error {
+            return serverError("listMyBookings", bookings);
+        }
+        return bookings;
     }
 
     # Active rooms
@@ -119,8 +129,29 @@ service http:InterceptableService / on ep0 {
     # http:Unauthorized (Not signed in or not permitted)
     # http:NotFound (No such record for this caller)
     # http:Conflict (The slot or name is already taken)
-    resource function post me/bookings(@http:Payload BookingInput payload) returns Booking|ErrorBadRequest|ErrorUnauthorized|ErrorNotFound|ErrorConflict|http:NotImplemented {
-        return http:NOT_IMPLEMENTED;
+    resource function post me/bookings(http:RequestContext ctx, @http:Payload BookingInput payload)
+            returns BookingCreated|ErrorBadRequest|ErrorUnauthorized|ErrorNotFound|ErrorConflict|http:InternalServerError {
+        GatewayCaller|http:Unauthorized caller = requireGatewayCaller(ctx);
+        if caller is http:Unauthorized {
+            return unauthorized();
+        }
+        string? problem = validateBookingInput(payload, officeNow());
+        if problem is string {
+            return badRequest(problem);
+        }
+        BookingResult|error result = createBooking(caller, payload);
+        if result is error {
+            return serverError("createMyBooking", result);
+        }
+        BookingProblem? problem2 = result.problem;
+        Booking? created = result.booking;
+        if problem2 is BookingProblem {
+            return problemResponse(problem2);
+        }
+        if created is () {
+            return http:INTERNAL_SERVER_ERROR;
+        }
+        return <BookingCreated>{body: created};
     }
 
     # Cancel one of the caller's upcoming bookings
@@ -130,8 +161,28 @@ service http:InterceptableService / on ep0 {
     # http:BadRequest (The request is invalid)
     # http:Unauthorized (Not signed in or not permitted)
     # http:NotFound (No such record for this caller)
-    resource function post me/bookings/[string bookingId]/cancel() returns BookingOk|ErrorBadRequest|ErrorUnauthorized|ErrorNotFound|http:NotImplemented {
-        return http:NOT_IMPLEMENTED;
+    resource function post me/bookings/[string bookingId]/cancel(http:RequestContext ctx)
+            returns BookingOk|ErrorBadRequest|ErrorUnauthorized|ErrorNotFound|http:InternalServerError {
+        GatewayCaller|http:Unauthorized caller = requireGatewayCaller(ctx);
+        if caller is http:Unauthorized {
+            return unauthorized();
+        }
+        BookingResult|error result = cancelOwnBooking(caller.userId, bookingId.trim(), officeNow());
+        if result is error {
+            return serverError("cancelMyBooking", result);
+        }
+        BookingProblem? refusal = result.problem;
+        Booking? cancelled = result.booking;
+        if refusal is BookingProblem {
+            if refusal.kind == "notFound" {
+                return notFound(refusal.description);
+            }
+            return badRequest(refusal.description);
+        }
+        if cancelled is () {
+            return http:INTERNAL_SERVER_ERROR;
+        }
+        return <BookingOk>{body: cancelled};
     }
 }
 
