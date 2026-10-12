@@ -1,0 +1,1128 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-12T01:54:57.897997Z",
+  "commit": "501057ecf79faadb3e6bfe4f45884ea495f77f3b",
+  "baseUrl": "http://http-room-booking--development-default-48581226.openchoreoapis.localhost:19080/",
+  "isolation": "none possible: no scenario could create a container or read a count because the API returns 404 on every route",
+  "scenarios": [
+    {
+      "feature": "F1 Browse rooms and availability",
+      "featureFile": "specs/validation/acceptance/F1-browse-rooms-and-availability.feature",
+      "line": 6,
+      "rule": "Staff see each active room with its name, capacity and location",
+      "scenario": "The room list",
+      "tags": [],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "the room \"Kandy\" with capacity 8 on \"Floor 2, Main building\" is active",
+          "keyword": "Given",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Asha opens the rooms and availability page",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "\"Kandy\" is listed with capacity 8 and location \"Floor 2, Main building\"",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F1 Browse rooms and availability",
+      "featureFile": "specs/validation/acceptance/F1-browse-rooms-and-availability.feature",
+      "line": 15,
+      "rule": "Staff do not see deactivated rooms",
+      "scenario": "A deactivated room is hidden from staff",
+      "tags": [
+        "@negative"
+      ],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "the room \"Ella\" has been deactivated",
+          "keyword": "Given",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Asha opens the rooms and availability page",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "\"Ella\" is not listed",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F1 Browse rooms and availability",
+      "featureFile": "specs/validation/acceptance/F1-browse-rooms-and-availability.feature",
+      "line": 23,
+      "rule": "A day shows every one-hour slot from 08:00 to 18:00 as free or taken, with who holds a taken slot",
+      "scenario": "A day with one booking",
+      "tags": [],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "Ravi has booked \"Kandy\" from 09:00 to 10:00 for a day next week, titled \"Design sync\"",
+          "keyword": "Given",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Asha views \"Kandy\" on that day",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "the slots run from 08:00 to 18:00 in one-hour steps",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "the 09:00 slot shows as taken by \"Ravi Silva\"",
+          "keyword": "And",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "the 10:00 slot shows as free",
+          "keyword": "And",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F1 Browse rooms and availability",
+      "featureFile": "specs/validation/acceptance/F1-browse-rooms-and-availability.feature",
+      "line": 34,
+      "rule": "Staff can view only today up to 30 days ahead",
+      "scenario": "A day beyond 30 days",
+      "tags": [
+        "@negative"
+      ],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "Asha views \"Kandy\" on a day 31 days from today",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "no slot on that day can be booked",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F1 Browse rooms and availability",
+      "featureFile": "specs/validation/acceptance/F1-browse-rooms-and-availability.feature",
+      "line": 42,
+      "rule": "Slots already past today are not available",
+      "scenario": "A past slot today",
+      "tags": [
+        "@negative"
+      ],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "the time is 11:30 today",
+          "keyword": "Given",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Asha views \"Kandy\" for today",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "the 08:00 slot cannot be booked",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F1 Browse rooms and availability",
+      "featureFile": "specs/validation/acceptance/F1-browse-rooms-and-availability.feature",
+      "line": 50,
+      "rule": "The facilities admin sees the same availability, including who booked each slot",
+      "scenario": "Admin sees the booker",
+      "tags": [],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "Ravi has booked \"Kandy\" from 09:00 to 10:00 for a day next week",
+          "keyword": "Given",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Nimal the facilities admin views \"Kandy\" on that day",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "the 09:00 slot shows as taken by \"Ravi Silva\"",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F2 Book a room",
+      "featureFile": "specs/validation/acceptance/F2-book-a-room.feature",
+      "line": 6,
+      "rule": "Staff book a free one-hour slot, today or up to 30 days ahead, with an optional title",
+      "scenario": "Booking one slot with a title",
+      "tags": [],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "\"Galle\" is free from 10:00 to 11:00 on a day next week",
+          "keyword": "Given",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Asha books \"Galle\" from 10:00 to 11:00 on that day with the title \"Interview\"",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "\"Galle\" shows 10:00 as taken by \"Asha Perera\" on that day",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "\"Interview\" appears in her bookings",
+          "keyword": "And",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F2 Book a room",
+      "featureFile": "specs/validation/acceptance/F2-book-a-room.feature",
+      "line": 12,
+      "rule": "Staff book a free one-hour slot, today or up to 30 days ahead, with an optional title",
+      "scenario": "Booking without a title",
+      "tags": [],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "\"Galle\" is free from 15:00 to 16:00 on a day next week",
+          "keyword": "Given",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Asha books \"Galle\" from 15:00 to 16:00 on that day with no title",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "her bookings include \"Galle\" from 15:00 to 16:00",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F2 Book a room",
+      "featureFile": "specs/validation/acceptance/F2-book-a-room.feature",
+      "line": 20,
+      "rule": "Several consecutive free slots form one booking",
+      "scenario": "Booking two hours",
+      "tags": [],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "\"Kandy\" is free from 13:00 to 15:00 on a day next week",
+          "keyword": "Given",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Asha books \"Kandy\" from 13:00 to 15:00 on that day",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "her bookings list one booking for \"Kandy\" from 13:00 to 15:00",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F2 Book a room",
+      "featureFile": "specs/validation/acceptance/F2-book-a-room.feature",
+      "line": 26,
+      "rule": "Several consecutive free slots form one booking",
+      "scenario": "An end time before the start time",
+      "tags": [
+        "@negative"
+      ],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "Asha tries to book \"Kandy\" from 15:00 to 14:00",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "no booking is added to her bookings",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F2 Book a room",
+      "featureFile": "specs/validation/acceptance/F2-book-a-room.feature",
+      "line": 34,
+      "rule": "A past slot or a day beyond 30 days cannot be booked",
+      "scenario": "A day 31 days ahead",
+      "tags": [
+        "@negative"
+      ],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "Asha tries to book \"Kandy\" from 09:00 to 10:00 on a day 31 days from today",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "no booking is added to her bookings",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F2 Book a room",
+      "featureFile": "specs/validation/acceptance/F2-book-a-room.feature",
+      "line": 42,
+      "rule": "A slot already taken cannot be booked again",
+      "scenario": "Booking a taken slot",
+      "tags": [
+        "@negative"
+      ],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "Ravi has booked \"Kandy\" from 09:00 to 10:00 on a day next week",
+          "keyword": "Given",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Asha tries to book \"Kandy\" from 09:00 to 10:00 on that day",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "her bookings do not change",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "\"Kandy\" still shows 09:00 as taken by \"Ravi Silva\"",
+          "keyword": "And",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F2 Book a room",
+      "featureFile": "specs/validation/acceptance/F2-book-a-room.feature",
+      "line": 49,
+      "rule": "A slot already taken cannot be booked again",
+      "scenario": "A range that overlaps a taken slot",
+      "tags": [
+        "@negative"
+      ],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "Ravi has booked \"Kandy\" from 10:00 to 11:00 on a day next week",
+          "keyword": "Given",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Asha tries to book \"Kandy\" from 09:00 to 11:00 on that day",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "her bookings do not change",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F2 Book a room",
+      "featureFile": "specs/validation/acceptance/F2-book-a-room.feature",
+      "line": 57,
+      "rule": "Staff see their own upcoming bookings in one list",
+      "scenario": "My bookings",
+      "tags": [],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "Asha has booked \"Galle\" from 10:00 to 11:00 on a day next week",
+          "keyword": "Given",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Asha opens her bookings",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "the list shows \"Galle\" from 10:00 to 11:00 on that day",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F2 Book a room",
+      "featureFile": "specs/validation/acceptance/F2-book-a-room.feature",
+      "line": 65,
+      "rule": "Staff cancel their own upcoming booking and its slots become free",
+      "scenario": "Cancelling my booking",
+      "tags": [],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "Asha has booked \"Galle\" from 10:00 to 11:00 on a day next week",
+          "keyword": "Given",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Asha cancels that booking",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "\"Galle\" shows 10:00 as free on that day",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F2 Book a room",
+      "featureFile": "specs/validation/acceptance/F2-book-a-room.feature",
+      "line": 74,
+      "rule": "Only the booker cancels a booking, apart from facilities",
+      "scenario": "Cancelling someone else's booking",
+      "tags": [
+        "@negative"
+      ],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "Ravi has booked \"Kandy\" from 09:00 to 10:00 on a day next week",
+          "keyword": "Given",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Asha looks for a way to cancel Ravi's booking",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Ravi's booking remains active",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F3 Manage rooms and bookings",
+      "featureFile": "specs/validation/acceptance/F3-manage-rooms-and-bookings.feature",
+      "line": 6,
+      "rule": "Only the facilities admin adds rooms",
+      "scenario": "Adding a room",
+      "tags": [],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "Nimal the facilities admin adds a room named uniquely for this run with capacity 6 on \"Floor 1, Annex\"",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "that room is listed with capacity 6 and location \"Floor 1, Annex\"",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F3 Manage rooms and bookings",
+      "featureFile": "specs/validation/acceptance/F3-manage-rooms-and-bookings.feature",
+      "line": 11,
+      "rule": "Only the facilities admin adds rooms",
+      "scenario": "A duplicate room name",
+      "tags": [
+        "@negative"
+      ],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "a room named \"Kandy\" exists",
+          "keyword": "Given",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Nimal tries to add another room named \"Kandy\"",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "the number of rooms is unchanged",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F3 Manage rooms and bookings",
+      "featureFile": "specs/validation/acceptance/F3-manage-rooms-and-bookings.feature",
+      "line": 17,
+      "rule": "Only the facilities admin adds rooms",
+      "scenario": "Staff cannot add rooms",
+      "tags": [
+        "@negative"
+      ],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "Asha looks for a way to add a room",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "no way to add a room is available to her",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F3 Manage rooms and bookings",
+      "featureFile": "specs/validation/acceptance/F3-manage-rooms-and-bookings.feature",
+      "line": 24,
+      "rule": "The facilities admin edits a room's name, capacity and location",
+      "scenario": "Changing capacity",
+      "tags": [],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "a room \"Galle\" with capacity 4 exists",
+          "keyword": "Given",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Nimal changes the capacity of \"Galle\" to 5",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "\"Galle\" is listed with capacity 5",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F3 Manage rooms and bookings",
+      "featureFile": "specs/validation/acceptance/F3-manage-rooms-and-bookings.feature",
+      "line": 32,
+      "rule": "A deactivated room is hidden from staff and can be reactivated",
+      "scenario": "Deactivating a room",
+      "tags": [],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "\"Sigiriya\" is active",
+          "keyword": "Given",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Nimal deactivates \"Sigiriya\"",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Asha does not see \"Sigiriya\" in the room list",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Nimal still sees \"Sigiriya\" marked inactive",
+          "keyword": "And",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F3 Manage rooms and bookings",
+      "featureFile": "specs/validation/acceptance/F3-manage-rooms-and-bookings.feature",
+      "line": 38,
+      "rule": "A deactivated room is hidden from staff and can be reactivated",
+      "scenario": "Reactivating a room",
+      "tags": [],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "\"Sigiriya\" is inactive",
+          "keyword": "Given",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Nimal reactivates \"Sigiriya\"",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Asha sees \"Sigiriya\" in the room list",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F3 Manage rooms and bookings",
+      "featureFile": "specs/validation/acceptance/F3-manage-rooms-and-bookings.feature",
+      "line": 46,
+      "rule": "Deactivating a room cancels its future bookings",
+      "scenario": "Future bookings are cancelled",
+      "tags": [],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "Asha has booked \"Sigiriya\" from 14:00 to 15:00 on a day next week",
+          "keyword": "Given",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Nimal deactivates \"Sigiriya\"",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Asha's booking shows as cancelled by facilities",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F3 Manage rooms and bookings",
+      "featureFile": "specs/validation/acceptance/F3-manage-rooms-and-bookings.feature",
+      "line": 54,
+      "rule": "The facilities admin cancels any upcoming booking with an optional reason, which the booker sees",
+      "scenario": "Cancelling with a reason",
+      "tags": [],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "Asha has booked \"Kandy\" from 13:00 to 14:00 on a day next week",
+          "keyword": "Given",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Nimal cancels that booking with the reason \"Projector maintenance\"",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "\"Kandy\" shows 13:00 as free on that day",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Asha sees her booking cancelled by facilities with the reason \"Projector maintenance\"",
+          "keyword": "And",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F3 Manage rooms and bookings",
+      "featureFile": "specs/validation/acceptance/F3-manage-rooms-and-bookings.feature",
+      "line": 60,
+      "rule": "The facilities admin cancels any upcoming booking with an optional reason, which the booker sees",
+      "scenario": "Cancelling without a reason",
+      "tags": [],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "Asha has booked \"Kandy\" from 16:00 to 17:00 on a day next week",
+          "keyword": "Given",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Nimal cancels that booking with no reason",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "\"Kandy\" shows 16:00 as free on that day",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    },
+    {
+      "feature": "F3 Manage rooms and bookings",
+      "featureFile": "specs/validation/acceptance/F3-manage-rooms-and-bookings.feature",
+      "line": 69,
+      "rule": "Only the facilities admin cancels any booking",
+      "scenario": "Staff cannot cancel another person's booking",
+      "tags": [
+        "@negative"
+      ],
+      "outcome": "blocked",
+      "steps": [
+        {
+          "text": "Ravi has booked \"Kandy\" from 09:00 to 10:00 on a day next week",
+          "keyword": "Given",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Asha looks for a way to cancel Ravi's booking",
+          "keyword": "When",
+          "observed": "could not be carried out: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        },
+        {
+          "text": "Ravi's booking remains active",
+          "keyword": "Then",
+          "observed": "not reached: the room-booking-api answers 404 {\"error\":\"Not Found\"} from envoy for /rooms, /me/bookings, even with a bearer token, so no room or booking data can be loaded or written; the app shows 'Availability unavailable'"
+        }
+      ],
+      "evidence": {
+        "network": [
+          {
+            "method": "GET",
+            "url": "/api/rooms?limit=100",
+            "status": 404
+          },
+          {
+            "method": "GET",
+            "url": "http://development-default.openchoreoapis.localhost:19080/room-booking-l29b-room-booking-api-http/rooms (curl, bogus bearer)",
+            "status": 404
+          }
+        ],
+        "console": [],
+        "snapshot": "- heading \"Rooms and availability\"\n- text \"Availability unavailable \u2014 We could not load bookings. Try again in a few minutes.\"\n- table \"Rooms\" with column headers Room, Capacity, Location, Status and no rows"
+      }
+    }
+  ]
+}
