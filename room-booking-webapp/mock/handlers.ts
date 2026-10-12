@@ -71,6 +71,70 @@ export const handlers: RequestHandler[] = [
   // GET /admin/rooms — every room, inactive included
   http.get("/api/admin/rooms", ({ request }) => HttpResponse.json(page(request, rooms))),
 
+  // POST /admin/rooms — names are unique (case-insensitive)
+  http.post("/api/admin/rooms", async ({ request }) => {
+    const body = (await request.json().catch(() => null)) as { name?: string; capacity?: number; location?: string } | null;
+    const name = body?.name?.trim();
+    const location = body?.location?.trim();
+    if (!name || !location || !Number.isInteger(body?.capacity) || (body?.capacity as number) < 1) {
+      return badRequest("name, capacity (at least 1) and location are required");
+    }
+    if (rooms.some((r) => r.name.toLowerCase() === name.toLowerCase())) {
+      return HttpResponse.json({ code: 409, message: "Name taken", description: "A room with that name already exists." }, { status: 409 });
+    }
+    const created: MockRoom = { id: `r${nextId++}`, name, capacity: body?.capacity as number, location, active: true };
+    rooms.push(created);
+    return HttpResponse.json(created, { status: 201 });
+  }),
+
+  // PATCH /admin/rooms/{roomId} — edit, deactivate (cancels future bookings), reactivate
+  http.patch("/api/admin/rooms/:roomId", async ({ request, params }) => {
+    const room = rooms.find((r) => r.id === params.roomId);
+    if (!room) return HttpResponse.json({ code: 404, message: "No such room" }, { status: 404 });
+    const body = (await request.json().catch(() => null)) as {
+      name?: string; capacity?: number; location?: string; active?: boolean;
+    } | null;
+    if (!body) return badRequest("A body is required");
+    const name = body.name === undefined ? room.name : body.name.trim();
+    const location = body.location === undefined ? room.location : body.location.trim();
+    const capacity = body.capacity === undefined ? room.capacity : body.capacity;
+    if (!name || !location || !Number.isInteger(capacity) || capacity < 1) {
+      return badRequest("name, capacity (at least 1) and location must be valid");
+    }
+    if (rooms.some((r) => r.id !== room.id && r.name.toLowerCase() === name.toLowerCase())) {
+      return HttpResponse.json({ code: 409, message: "Name taken", description: "A room with that name already exists." }, { status: 409 });
+    }
+    room.name = name;
+    room.location = location;
+    room.capacity = capacity;
+    bookings.forEach((b) => { if (b.roomId === room.id) b.roomName = name; });
+    if (body.active !== undefined) {
+      if (room.active && !body.active) {
+        const now = new Date();
+        bookings
+          .filter((b) => b.roomId === room.id && b.status === "active"
+            && (b.date > day(0) || (b.date === day(0) && b.endHour > now.getHours())))
+          .forEach((b) => { b.status = "cancelled"; b.cancelledBy = "facilities"; b.cancelReason = "Room deactivated"; });
+      }
+      room.active = body.active;
+    }
+    return HttpResponse.json(room);
+  }),
+
+  // POST /bookings/{bookingId}/cancel — any upcoming active booking, optional reason
+  http.post("/api/bookings/:bookingId/cancel", async ({ request, params }) => {
+    const b = bookings.find((x) => x.id === params.bookingId);
+    const upcoming = b && (b.date > day(0) || (b.date === day(0) && b.endHour > new Date().getHours()));
+    if (!b || b.status !== "active" || !upcoming) {
+      return HttpResponse.json({ code: 404, message: "No such booking" }, { status: 404 });
+    }
+    const body = (await request.json().catch(() => null)) as { reason?: string | null } | null;
+    b.status = "cancelled";
+    b.cancelledBy = "facilities";
+    b.cancelReason = body?.reason?.trim() || null;
+    return HttpResponse.json(b);
+  }),
+
   // GET /bookings — active bookings of a room on a day, with who booked them
   http.get("/api/bookings", ({ request }) => {
     const url = new URL(request.url);

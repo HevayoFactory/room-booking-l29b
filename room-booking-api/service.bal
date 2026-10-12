@@ -95,8 +95,28 @@ service http:InterceptableService / on ep0 {
     # http:Unauthorized (Not signed in or not permitted)
     # http:NotFound (No such record for this caller)
     # http:Conflict (The slot or name is already taken)
-    resource function patch admin/rooms/[string roomId](@http:Payload RoomPatch payload) returns Room|ErrorBadRequest|ErrorUnauthorized|ErrorNotFound|ErrorConflict|http:NotImplemented {
-        return http:NOT_IMPLEMENTED;
+    resource function patch admin/rooms/[string roomId](http:RequestContext ctx, @http:Payload RoomPatch payload)
+            returns RoomOk|ErrorBadRequest|ErrorUnauthorized|ErrorNotFound|ErrorConflict|http:InternalServerError {
+        if requireGatewayCaller(ctx) is http:Unauthorized {
+            return unauthorized();
+        }
+        string? problem = validateRoomPatch(payload);
+        if problem is string {
+            return badRequest(problem);
+        }
+        RoomResult|error result = updateRoom(roomId.trim(), payload, officeNow());
+        if result is error {
+            return serverError("updateRoom", result);
+        }
+        BookingProblem? refusal = result.problem;
+        Room? room = result.room;
+        if refusal is BookingProblem {
+            return problemResponse(refusal);
+        }
+        if room is () {
+            return http:INTERNAL_SERVER_ERROR;
+        }
+        return <RoomOk>{body: room};
     }
 
     # Add a room
@@ -106,8 +126,28 @@ service http:InterceptableService / on ep0 {
     # http:BadRequest (The request is invalid)
     # http:Unauthorized (Not signed in or not permitted)
     # http:Conflict (The slot or name is already taken)
-    resource function post admin/rooms(@http:Payload RoomInput payload) returns Room|ErrorBadRequest|ErrorUnauthorized|ErrorConflict|http:NotImplemented {
-        return http:NOT_IMPLEMENTED;
+    resource function post admin/rooms(http:RequestContext ctx, @http:Payload RoomInput payload)
+            returns RoomCreated|ErrorBadRequest|ErrorUnauthorized|ErrorConflict|http:InternalServerError {
+        if requireGatewayCaller(ctx) is http:Unauthorized {
+            return unauthorized();
+        }
+        string? problem = validateRoomInput(payload);
+        if problem is string {
+            return badRequest(problem);
+        }
+        RoomResult|error result = createRoom(payload);
+        if result is error {
+            return serverError("createRoom", result);
+        }
+        BookingProblem? refusal = result.problem;
+        Room? room = result.room;
+        if refusal is BookingProblem {
+            return <ErrorConflict>{body: {code: 409, message: "Conflict", description: refusal.description}};
+        }
+        if room is () {
+            return http:INTERNAL_SERVER_ERROR;
+        }
+        return <RoomCreated>{body: room};
     }
 
     # Cancel any upcoming booking
@@ -117,8 +157,31 @@ service http:InterceptableService / on ep0 {
     # http:BadRequest (The request is invalid)
     # http:Unauthorized (Not signed in or not permitted)
     # http:NotFound (No such record for this caller)
-    resource function post bookings/[string bookingId]/cancel(@http:Payload CancelInput payload) returns BookingOk|ErrorBadRequest|ErrorUnauthorized|ErrorNotFound|http:NotImplemented {
-        return http:NOT_IMPLEMENTED;
+    resource function post bookings/[string bookingId]/cancel(http:RequestContext ctx, @http:Payload CancelInput? payload)
+            returns BookingOk|ErrorBadRequest|ErrorUnauthorized|ErrorNotFound|http:InternalServerError {
+        if requireGatewayCaller(ctx) is http:Unauthorized {
+            return unauthorized();
+        }
+        string? problem = validateCancelInput(payload);
+        if problem is string {
+            return badRequest(problem);
+        }
+        BookingResult|error result = cancelAnyBooking(bookingId.trim(), reasonOf(payload), officeNow());
+        if result is error {
+            return serverError("cancelBooking", result);
+        }
+        BookingProblem? refusal = result.problem;
+        Booking? cancelled = result.booking;
+        if refusal is BookingProblem {
+            if refusal.kind == "notFound" {
+                return notFound(refusal.description);
+            }
+            return badRequest(refusal.description);
+        }
+        if cancelled is () {
+            return http:INTERNAL_SERVER_ERROR;
+        }
+        return <BookingOk>{body: cancelled};
     }
 
     # Book consecutive free slots for the caller

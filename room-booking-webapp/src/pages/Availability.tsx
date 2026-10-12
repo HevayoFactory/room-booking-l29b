@@ -9,6 +9,10 @@ import {
   CardContent,
   Chip,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   ListingTable,
   PageContent,
   PageTitle,
@@ -101,8 +105,13 @@ export function AvailabilityPage(): ReactElement {
   const outOfRange = date < today || date > lastDay;
   const slotsKey = room && date && !outOfRange ? `${room.id}:${date}` : "";
 
+  const [reloadTick, setReloadTick] = useState(0);
+  const [cancelTarget, setCancelTarget] = useState<Booking | null>(null);
+  const [reason, setReason] = useState("");
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelFailed, setCancelFailed] = useState(false);
   const bookings = useLoad<Booking[]>(
-    `bookings:${slotsKey}`,
+    `bookings:${slotsKey}:${reloadTick}`,
     slotsKey && room
       ? async () => {
           const res = await roomBookingApi.GET("/bookings", {
@@ -123,6 +132,37 @@ export function AvailabilityPage(): ReactElement {
       return { h, booking, past };
     });
   }, [bookings, slotsKey, date, today, nowHour]);
+
+  const closeCancel = (): void => {
+    if (cancelling) return;
+    setCancelTarget(null);
+    setReason("");
+    setCancelFailed(false);
+  };
+  const confirmCancel = async (): Promise<void> => {
+    if (!cancelTarget) return;
+    setCancelling(true);
+    setCancelFailed(false);
+    try {
+      const trimmed = reason.trim();
+      const res = await roomBookingApi.POST("/bookings/{bookingId}/cancel", {
+        params: { path: { bookingId: cancelTarget.id } },
+        body: { reason: trimmed || null },
+      });
+      if (res.response.ok || res.response.status === 404) {
+        // 404: already cancelled or no longer upcoming; either way the slot view is stale.
+        setCancelTarget(null);
+        setReason("");
+        setReloadTick((n) => n + 1);
+      } else {
+        setCancelFailed(true);
+      }
+    } catch (err) {
+      if (!(err instanceof ForbiddenError)) setCancelFailed(true);
+    } finally {
+      setCancelling(false);
+    }
+  };
 
   return (
     <PageContent>
@@ -271,6 +311,13 @@ export function AvailabilityPage(): ReactElement {
                       <ListingTable.Cell>{booking?.bookedByName ?? ""}</ListingTable.Cell>
                       <ListingTable.Cell>{booking?.title ?? ""}</ListingTable.Cell>
                       <ListingTable.Cell align="right">
+                        {booking && !past && bookings.status === "ready" && (
+                          <Can op="POST /bookings/{bookingId}/cancel">
+                            <Button size="small" variant="text" color="error" onClick={() => setCancelTarget(booking)}>
+                              Cancel booking
+                            </Button>
+                          </Can>
+                        )}
                         {!booking && !past && !outOfRange && bookings.status === "ready" && (
                           <Can op="POST /me/bookings">
                             <Button
@@ -292,6 +339,40 @@ export function AvailabilityPage(): ReactElement {
           </Box>
         )}
       </Stack>
+
+      <Dialog open={cancelTarget !== null} onClose={closeCancel} fullWidth maxWidth="sm">
+        <DialogTitle>Cancel this booking</DialogTitle>
+        <DialogContent>
+          <Stack spacing={2} sx={{ pt: 1 }}>
+            {cancelFailed && (
+              <Alert severity="error">
+                <AlertTitle>Booking not cancelled</AlertTitle>
+                The booking was not cancelled. Try again.
+              </Alert>
+            )}
+            <Typography variant="body2">
+              {cancelTarget
+                ? `${cancelTarget.title || "Untitled"}, ${cancelTarget.bookedByName}, ${hourLabel(cancelTarget.startHour)} to ${hourLabel(cancelTarget.endHour)}. The slots become free.`
+                : ""}
+            </Typography>
+            <TextField
+              label="Reason (optional, shown to the booker)"
+              multiline
+              minRows={2}
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+            />
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="outlined" onClick={closeCancel} disabled={cancelling}>
+            Close
+          </Button>
+          <Button variant="contained" color="error" onClick={() => void confirmCancel()} disabled={cancelling}>
+            Cancel booking
+          </Button>
+        </DialogActions>
+      </Dialog>
     </PageContent>
   );
 }
