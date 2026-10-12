@@ -1,0 +1,10 @@
+# crash artefacts — never wanted, in any component
+core
+!core/
+core.[0-9]*
+hs_err_pid*.log
+replay_pid*.log
+
+/room-booking-api/target/
+/room-booking-webapp/node_modules/
+/room-booking-webapp/dist/

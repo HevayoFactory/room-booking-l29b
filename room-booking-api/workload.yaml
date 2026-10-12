@@ -1,0 +1,29 @@
+apiVersion: openchoreo.dev/v1alpha1
+metadata:
+  name: room-booking-api
+
+endpoints:
+  - name: http
+    type: HTTP
+    port: 9090
+    basePath: /
+    visibility:
+      - project
+      - external
+
+dependencies:
+  resources:
+    - ref: room-booking-l29b-eb468f92
+      envBindings:
+        dbname: BOOKINGS_DB_DBNAME
+        host: BOOKINGS_DB_HOST
+        password: BOOKINGS_DB_PASSWORD
+        port: BOOKINGS_DB_PORT
+        user: BOOKINGS_DB_USER
+    - ref: room-booking-l29b-5a4f26d3
+      envBindings:
+        client_id: USER_AUTH_CLIENT_ID
+        issuer: USER_AUTH_ISSUER
+        jwks_url: USER_AUTH_JWKS_URL
+        resource: USER_AUTH_RESOURCE
+        scopes: USER_AUTH_SCOPES
